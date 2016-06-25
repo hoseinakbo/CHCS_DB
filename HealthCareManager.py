@@ -1,37 +1,56 @@
+import ttk
+
 import MySQLdb
 from Tkinter import *
 
 
-def setup_table(query):
-    cur.execute(query)
-    print(cur.fetchall())
-    table(cur.fetchall)
+def show_table():
+    rows = []
+    i = 0
+    for data_row in cur.fetchall():
+        cols = []
+        j = 0
+        for data_col in data_row:
+            e = Entry(window, relief=RIDGE)
+            e.grid(row=i, column=j, sticky=NSEW)
+            e.insert(END, data_col)
+            cols.append(e)
+            j += 1
+        rows.append(cols)
+        i += 1
 
 
 def okOnClick():
-   print(queryEntry.get())
-   setup_table(queryEntry.get())
-
+    print(queryEntry.get())
+    cur.execute(queryEntry.get())
+    show_table()
 
 
 def gui_setup():
-    window = Tk()
-    window.title("Health Care System")
-    window.resizable(width=False, height=False)
-    window.geometry('{}x{}'.format(500, 300))
+    global window
+    # window = Tk()
+    # window.title("Health Care System")
+    # window.geometry('{}x{}'.format(500, 300))
+    #
+    # queryLabel = Label(window, text="Enter Query: ")
+    # queryLabel.pack()
+    #
+    # global queryEntry
+    # queryEntry = Entry(window, width=50)
+    # queryEntry.pack()
+    #
+    # okButton = Button(window, text="OK", command=okOnClick)
+    # okButton.pack()
+    #
+    # resultLabel = Label(window, text="Result: ")
+    # resultLabel.pack()
 
-    queryLabel = Label(window, text="Enter Query: ")
-    queryLabel.pack()
-
-    global queryEntry
-    queryEntry = Entry(window, width=50)
-    queryEntry.pack()
-
-    okButton = Button(window, text="OK", command=okOnClick)
-    okButton.pack()
-
-    resultLabel = Label(window, text="Result: ")
-    resultLabel.pack()
+    window = ttk.Panedwindow(parent, orient=VERTICAL)
+    # first pane, which would get widgets gridded into it:
+    f1 = ttk.Labelframe(p, text='Pane1', width=100, height=100)
+    f2 = ttk.Labelframe(p, text='Pane2', width=100, height=100)  # second pane
+    p.add(f1)
+    p.add(f2)
 
     # resultsLabel = Text(window, height=5, width=30)
     # resultsLabel.pack()
@@ -57,27 +76,4 @@ cur = db.cursor()
 gui_setup()
 
 
-
-def table(data):
-    global rows
-    rows = []
-    for i in range(len(data)):
-        cols = []
-        for j in range(len(data[0])):
-            e = Entry(relief=RIDGE)
-            e.grid(row=i, column=j, sticky=NSEW)
-            e.insert(END, data[i][j])
-            cols.append(e)
-        rows.append(cols)
-
-def onPress():
-    for row in rows:
-        for col in row:
-            print col.get(),
-        print
-
-
-
 # db.close()
-
-
