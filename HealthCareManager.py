@@ -1,29 +1,54 @@
+import MySQLdb
+from Tkinter import *
 
-# import tkinter
-# top = tkinter.Tk()
-# # Code to add widgets will go here...
-# w = tkinter.Entry(top)
-# top.mainloop()
+db = MySQLdb.connect(host="localhost",  # your host, usually localhost
+                     user="root",  # your username
+                     passwd="ali",  # your password
+                     db="chcs")  # name of the data base
 
-from tkinter import *
-from tkinter import ttk
+# you must create a Cursor object. It will let
+#  you execute all the queries you need
+cur = db.cursor()
+
+# Use all the SQL you like
+cur.execute("SELECT * FROM YOUR_TABLE_NAME")
+
+# print all the first cell of all the rows
+for row in cur.fetchall():
+    print row[0]
+
+db.close()
 
 window = Tk()
-
-window.style = ttk.Style()
-window.style.theme_use("alt")
 window.title("Health Care System")
+window.resizable(width=False, height=False)
+window.geometry('{}x{}'.format(500, 300))
 
-L1 = Label(window, text="Enter Query: ")
-L1.pack()
-# L1.pack( side = LEFT)
 
-E1 = Entry(window, width=50)
-E1.pack()
-# E1.pack(side = RIGHT)
+# def ok_button_config():
+#     x = queryString.get()
+#     if x:
+#         okButton.config(state='normal')
+#     else:
+#         okButton.config(state='disabled')
+#
+#
+# queryString = StringVar(window)
+# queryString.trace("w", ok_button_config)fdsd
 
-ok = Button(window, text="OK")
-ok.pack()
-# ok.pack(side = BOTTOM)
+queryLabel = Label(window, text="Enter Query: ")
+queryLabel.pack()
+
+# queryEntry = Entry(window, width=50, textvariable=queryString)
+queryEntry = Entry(window, width=50)
+queryEntry.pack()
+# queryEntry.pack(side = RIGHT)
+
+okButton = Button(window, text="OK")
+okButton.pack()
+# okButton.pack(side = BOTTOM)
+
+resultLabel = Label(window, text="Result: ")
+resultLabel.pack()
 
 window.mainloop()
