@@ -1,3 +1,4 @@
+import tkMessageBox
 import ttk
 
 import MySQLdb
@@ -5,55 +6,75 @@ from Tkinter import *
 
 
 def show_table():
-    rows = []
+    # rows = []
+    for widget in bFrame.winfo_children():
+        widget.destroy()
+    bFrame.pack(side=BOTTOM)
     i = 0
+    j = 0
+    try:
+        for p in range(len(cur.description)):
+            e = Label(bFrame, relief=GROOVE, text=cur.description[p][0])
+            e.grid(row=i, column=j, sticky=NSEW)
+            j = j + 1
+        i = 1
+    except Exception, e:
+        print "no col name"
     for data_row in cur.fetchall():
-        cols = []
+        # cols = []
         j = 0
         for data_col in data_row:
-            e = Entry(window, relief=RIDGE)
+            # e = Entry(bFrame, relief=RIDGE, yscrollcommand=scrollbar.set)
+            e = Label(bFrame, relief=GROOVE, text=data_col)
             e.grid(row=i, column=j, sticky=NSEW)
-            e.insert(END, data_col)
-            cols.append(e)
+            # e.insert(END, data_col)
+            # cols.append(e)
             j += 1
-        rows.append(cols)
+        # rows.append(cols)
         i += 1
 
 
 def okOnClick():
     print(queryEntry.get())
-    cur.execute(queryEntry.get())
-    show_table()
+    try:
+        cur.execute(queryEntry.get())
+        show_table()
+    except Exception, e:
+        print repr(e)
+        tkMessageBox.showinfo("Error!!??\n wat???", "Something's wrong!")
 
 
 def gui_setup():
-    global window
-    # window = Tk()
-    # window.title("Health Care System")
-    # window.geometry('{}x{}'.format(500, 300))
-    #
-    # queryLabel = Label(window, text="Enter Query: ")
-    # queryLabel.pack()
-    #
-    # global queryEntry
-    # queryEntry = Entry(window, width=50)
-    # queryEntry.pack()
-    #
-    # okButton = Button(window, text="OK", command=okOnClick)
-    # okButton.pack()
-    #
-    # resultLabel = Label(window, text="Result: ")
+    global bFrame, scrollbar, window
+    window = Tk()
+
+    bFrame = Frame(window)
+    uFrame = Frame(window)
+    # bFrame.pack(side = BOTTOM)
+    uFrame.pack(side=TOP)
+
+    # scrollbar = Scrollbar(bFrame)
+    # scrollbar.pack(side=RIGHT, fill=Y)
+
+    window.title("Health Care System")
+    # window.geometry('{}x{}'.format(500, 200))
+
+    queryLabel = Label(uFrame, text="Enter Query: ")
+    queryLabel.pack()
+
+    global queryEntry
+    queryEntry = Entry(uFrame, width=100)
+    queryEntry.insert(END, "select * from drug")
+    queryEntry.pack(side=LEFT)
+
+    okButton = Button(uFrame, text="OK", command=okOnClick)
+    okButton.pack(side=RIGHT)
+
+    # resultLabel = Label(uFrame, text="Result: ")
     # resultLabel.pack()
 
-    window = ttk.Panedwindow(parent, orient=VERTICAL)
-    # first pane, which would get widgets gridded into it:
-    f1 = ttk.Labelframe(p, text='Pane1', width=100, height=100)
-    f2 = ttk.Labelframe(p, text='Pane2', width=100, height=100)  # second pane
-    p.add(f1)
-    p.add(f2)
 
-    # resultsLabel = Text(window, height=5, width=30)
-    # resultsLabel.pack()
+
 
     window.mainloop()
 
